@@ -1,4 +1,6 @@
-@model IEnumerable<LecCRRUD.Models.Entities.Person>
+@* @model IEnumerable<LecCRRUD.Models.Entities.Person> *@
+@model IEnumerable<Person>
+@* @model [i missed something that we were supposed to replace the above with]  *@
 
 @{
     ViewData["Title"] = "Index";
@@ -31,27 +33,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var person in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(modelItem => person.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => person.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MiddleName)
+                @Html.DisplayFor(modelItem => person.MiddleName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => person.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
+                @Html.DisplayFor(modelItem => person.DateOfBirth)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                <a asp-action="Edit" asp-route-id="@person.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@person.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@person.Id">Delete</a>
             </td>
         </tr>
 }
