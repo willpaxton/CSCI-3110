@@ -16,4 +16,11 @@ public class DbProductRepository : IProductRepository
     {
         return await _db.Products.ToListAsync();
     }
+
+    public async Task<Product> CreateAsync(Product newProduct)
+    {
+        await _db.Products.AddAsync(newProduct);
+        await _db.SaveChangesAsync();
+        return newProduct;
+    }
 }

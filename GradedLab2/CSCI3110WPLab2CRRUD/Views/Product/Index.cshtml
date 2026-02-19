@@ -30,12 +30,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.InStock)
             </th>
-            <th>
+            @* <th>
                 @Html.DisplayNameFor(model => model.ImageData)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ImageMIMEType)
-            </th>
+            </th> *@
             <th></th>
         </tr>
     </thead>
@@ -60,12 +60,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.InStock)
             </td>
-            <td>
+            @* <td>
                 @Html.DisplayFor(modelItem => item.ImageData)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ImageMIMEType)
-            </td>
+            </td> *@
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
