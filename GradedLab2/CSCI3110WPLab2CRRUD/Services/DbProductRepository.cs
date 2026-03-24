@@ -26,7 +26,7 @@ public class DbProductRepository : IProductRepository
         return newProduct;
     }
 
-    public async Task<Product> ReadAsync(int id)
+    public async Task<Product?> ReadAsync(int id)
     {
         return await _db.Products.FindAsync(id);
     }
