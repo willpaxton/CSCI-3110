@@ -87,4 +87,13 @@ export class MovieDOM {
         `
         return movieCardDiv;
     }
+
+    setUpEventListeners(){
+        document.addEventListener("submit", (e) => {
+            if(e.target.getAttribute('id') === "movieForm") {
+                e.preventDefault(); // not sure if this is right 
+                console.log("Form submitted.");
+            }
+        })
+    }
 }

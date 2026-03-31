@@ -39,3 +39,4 @@ let MovieObj = new MovieDOM();
 // const form = document.querySelector("#jobApplicationForm");
 const movieGrid = document.querySelector("#moviesGrid");
 MovieObj.showMovies(movieGrid, movies);
+MovieObj.setUpEventListeners();
