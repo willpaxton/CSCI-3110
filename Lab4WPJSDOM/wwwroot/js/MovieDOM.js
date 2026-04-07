@@ -75,10 +75,10 @@ export class MovieDOM {
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-primary flex-fill" title="Edit">
+                        <button class="btn btn-sm btn-outline-primary flex-fill edit-btn" data-movie-id="${movie.id}" title="Edit">
                             <i class="bi bi-pencil-square"></i> Edit
                         </button>
-                        <button class="btn btn-sm btn-outline-danger flex-fill" title="Delete">
+                        <button class="btn btn-sm btn-outline-danger flex-fill delete-btn" data-movie-id="${movie.id}" title="Delete">
                             <i class="bi bi-trash"></i> Delete
                         </button>
                     </div>
@@ -91,9 +91,141 @@ export class MovieDOM {
     setUpEventListeners(){
         document.addEventListener("submit", (e) => {
             if(e.target.getAttribute('id') === "movieForm") {
-                e.preventDefault(); // not sure if this is right 
-                console.log("Form submitted.");
+                e.preventDefault();
+                console.log("Form submitted");
+                const movie = this.#processForm();
+                const movieGrid = document.getElementById('moviesGrid');
+                const isEditing = document.getElementById('submitBtn').innerHTML.includes('Update');
+
+                if (isEditing) {
+                    const existingCard = document.getElementById(`movie-${movie.id}`);
+                    const newCard = this.#createMovieCard(movie);
+                    existingCard.replaceWith(newCard);
+                } else {
+                    this.#createAndAppendMovieCard(movie, movieGrid);
+                }
+
+                this.#resetForm();
             }
-        })
+        });
+
+        document.addEventListener("click", (e) => {
+            const editBtn = e.target.closest('.edit-btn');
+            const cancelBtn = e.target.closest('#cancelBtn');
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (cancelBtn) {
+                this.#resetForm();
+                return;
+            }
+            if (editBtn) {
+                const movieId = editBtn.getAttribute('data-movie-id');
+                console.log(movieId);
+                this.#populateFormForEdit(movieId);
+            }            
+            if (deleteBtn) {
+                const movieId = deleteBtn.getAttribute('data-movie-id');
+                console.log(movieId);
+                this.#deleteMovie(movieId);
+            }
+        });
     }
+
+    #processForm(){
+        const form = document.getElementById('movieForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const isEditing = submitBtn.innerHTML.includes('Update');
+
+        const movie = {
+            id: isEditing ? document.getElementById('movieId').value : this.#movies.length + 1,
+            title: document.getElementById('title').value,
+            director: document.getElementById('director').value,
+            releaseDate: document.getElementById('releaseDate').value,
+            isAvailable: (document.getElementById('isAvailable').value === 'true')
+        }
+
+        if (isEditing) {
+            const index = this.#movies.findIndex(m => String(m.id) === String(movie.id));
+                this.#movies[index] = movie;
+            } else {
+                this.#movies.push(movie);
+            }
+        
+
+
+        console.log(movie);
+        return movie;
+    }
+
+    #createAndAppendMovieCard(movie, parentElement) {
+        // Create the movie card
+        const cardCol = this.#createMovieCard(movie);
+
+        // Hide it initially for animation
+        $(cardCol).hide();
+
+        // Append to parent and animate
+        $(parentElement).append(cardCol);
+        $(cardCol).fadeIn(600);
+    }
+
+    #resetForm() {
+        document.getElementById('movieForm').reset();
+        document.getElementById('movieId').value = '0';
+        document.querySelector('.card-title').innerHTML = '<i class="bi bi-plus-circle"></i> Add New Movie';
+        document.getElementById('submitBtn').innerHTML = '<i class="bi bi-plus-lg"></i> Add Movie';
+        document.getElementById('cancelBtnRow').style.display = 'none';
+    }
+
+
+    #populateFormForEdit(movieId) {
+        const movie = this.#movies.find(movie => String(movie.id) === String(movieId));
+        if (!movie) {
+            console.log('no movie :(');
+            return;
+        }
+        console.log('movie found');
+        document.getElementById('movieId').value = movie.id;
+        document.getElementById('title').value = movie.title;
+        document.getElementById('director').value = movie.director;
+        document.getElementById('releaseDate').value = movie.releaseDate;
+        document.getElementById('isAvailable').value = movie.isAvailable ? 'true' : 'false';
+
+        document.querySelector('.card-title').innerHTML = '<i class="bi bi-pencil-square"></i> Edit Movie';
+        document.getElementById('submitBtn').innerHTML = '<i class="bi bi-pencil-square"></i> Update Movie';
+        document.getElementById('cancelBtnRow').style.display = 'block';
+        document.getElementById('movieForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    #deleteMovie(movieId) {
+        console.log("delete movie triggered")
+        // Find the movie
+        const movie = this.#movies.find(movie => String(movie.id) === String(movieId));
+        if (!movie) return;
+
+        // Show confirmation dialog
+        const confirmed = confirm(`Are you sure you want to delete "${movie.title}"?`);
+        console.log("confirmed?");
+        if (confirmed) {
+            // Remove from array
+            const index = this.#movies.findIndex(m => m.id === movieId);
+            if (index !== -1) {
+                this.#movies.splice(index, 1);
+            }
+
+            // Remove the card with animation
+            const card = document.getElementById(`movie-${movieId}`);
+            $(card).fadeOut(400, function () {
+                $(this).remove();
+
+                // Check if there are no movies left and show empty state
+                const movieGrid = document.querySelector('#moviesGrid');
+                if (this.#movies.length === 0) {
+                    const emptyState = this.#createEmptyState();
+                    movieGrid.appendChild(emptyState);
+                }
+            }.bind(this));
+        }
+    }
+
+
 }
